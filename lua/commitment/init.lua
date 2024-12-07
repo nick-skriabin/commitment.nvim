@@ -104,9 +104,7 @@ local function custom_write()
     -- Check if this is a forced write
     local force = vim.v.cmdbang == 1
 
-    local file_has_changes = git.file_has_changes(filename)
-
-    if LOCKED and (vim.bo.modified or file_has_changes) then
+    if LOCKED and vim.bo.modified then
         return
     end
 

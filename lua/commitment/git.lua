@@ -17,13 +17,6 @@ function Git.git_tree_is_clean()
     return changed_files == ""
 end
 
---- Checks if the file has changes
---- @param filename string
---- @return boolean
-function Git.file_has_changes(filename)
-    return vim.fn.system("cd " .. vim.fn.getcwd() .. " && git status --s " .. filename .. " | wc -l | awk '$1=$1'")
-end
-
 --- Checks if the commit message is useless
 --- Uses a list of the most common useless commit messages
 --- @return boolean
