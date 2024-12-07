@@ -3,6 +3,8 @@
 ---
 --- MIT License Copyright (c) 2024 Nick Skriabin (a.k.a. Whaledev)
 ---
+--- ==============================================================================
+---
 --- Often commits are good. But we forget to do them. This plugin helps you remember to do them.
 ---
 --- ## What this plugin does: ~
@@ -59,11 +61,6 @@
 ---   check_interval = -1,
 --- })
 --- ```
-local utils = require("commitment.utils")
-local git = require("commitment.git")
-
-WRITES_COUNT = 0
-LOCKED = false
 
 --- Module start
 local M = {
@@ -84,6 +81,12 @@ local M = {
         check_interval = -1,
     },
 }
+
+local utils = require("commitment.utils")
+local git = require("commitment.git")
+
+WRITES_COUNT = 0
+LOCKED = false
 
 --- Handles writing to file
 --- Will prevent writes to file if `locked` is true

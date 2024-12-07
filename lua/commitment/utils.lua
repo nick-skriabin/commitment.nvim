@@ -1,4 +1,3 @@
---- Collection of utility functions
 local Utils = {}
 
 --- Creates an augroup

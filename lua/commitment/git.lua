@@ -1,4 +1,3 @@
---- Git utils
 local Git = {}
 
 --- Checks if the current CWD is a git repo

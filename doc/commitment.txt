@@ -1,10 +1,11 @@
 ==============================================================================
 ------------------------------------------------------------------------------
-                                                                         *utils*
-                                    `utils`
 *commitment.nvim* - Never forget to git commit!
+*Commitment*
 
 MIT License Copyright (c) 2024 Nick Skriabin (a.k.a. Whaledev)
+
+==============================================================================
 
 Often commits are good. But we forget to do them. This plugin helps you remember to do them.
 
@@ -64,8 +65,8 @@ require("commitment").setup({
 ```
 
 ------------------------------------------------------------------------------
-                                                                    *Commitment*
-                                  `Commitment`
+                                                                             *M*
+                                      `M`
 Module start
 
 ------------------------------------------------------------------------------
@@ -84,35 +85,35 @@ when `config.prevent_write` is true.
 @private
 
 ------------------------------------------------------------------------------
-                                      *Commitment.setup_write_prevent_autocmd()*
-                   `Commitment.setup_write_prevent_autocmd`()
+                                               *M.setup_write_prevent_autocmd()*
+                       `M.setup_write_prevent_autocmd`()
 Sets up an autocmd to prevent writing to the file
 when `config.prevent_write` is true.
 
 ------------------------------------------------------------------------------
-                                                      *Commitment.get_message()*
-                        `Commitment.get_message`({alt})
+                                                               *M.get_message()*
+                             `M.get_message`({alt})
 Gets the message to be displayed to the user
 
 Parameters ~
 {alt} `(boolean?)` Indicates that an alternative message should be used.
 
 ------------------------------------------------------------------------------
-                                            *Commitment.setup_watcher_autocmd()*
-                      `Commitment.setup_watcher_autocmd`()
+                                                     *M.setup_watcher_autocmd()*
+                          `M.setup_watcher_autocmd`()
 Sets up an autocmd to watch for changes in the git tree
 it will notify the user if they exceeded the number of writes
 or if the commit message is useless. It will also disable writing
 to the file when `config.prevent_write` is true.
 
 ------------------------------------------------------------------------------
-                                                    *Commitment.run_scheduled()*
-                          `Commitment.run_scheduled`()
+                                                             *M.run_scheduled()*
+                              `M.run_scheduled`()
 Runs the watcher with `config.check_interval` interval in minutes
 
 ------------------------------------------------------------------------------
-                                                            *Commitment.setup()*
-                          `Commitment.setup`({config})
+                                                                     *M.setup()*
+                              `M.setup`({config})
 Module setup
 
 Parameters ~
@@ -127,11 +128,6 @@ Usage ~
 
 ==============================================================================
 ------------------------------------------------------------------------------
-                                                                           *Git*
-                                     `Git`
-Git utils
-
-------------------------------------------------------------------------------
                                                              *Git.is_git_repo()*
                               `Git.is_git_repo`()
 Checks if the current CWD is a git repo
@@ -144,13 +140,6 @@ Checks if the git tree is clean
 @return boolean
 
 ------------------------------------------------------------------------------
-                                                        *Git.file_has_changes()*
-                       `Git.file_has_changes`({filename})
-Checks if the file has changes
-@param filename string
-@return boolean
-
-------------------------------------------------------------------------------
                                                        *Git.is_useless_commit()*
                            `Git.is_useless_commit`()
 Checks if the commit message is useless
@@ -159,11 +148,6 @@ Uses a list of the most common useless commit messages
 
 
 ==============================================================================
-------------------------------------------------------------------------------
-                                                                         *Utils*
-                                    `Utils`
-Collection of utility functions
-
 ------------------------------------------------------------------------------
                                                              *Utils.autogroup()*
                        `Utils.autogroup`({name}, {clear})
