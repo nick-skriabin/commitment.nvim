@@ -1,14 +1,16 @@
-<h1 align="center">commitment.nvim</h1>
+<h1 align="center">✨commitment.nvim✨</h1>
 
 We all know often commits are good. But we forget to do them.
-Meet commitment.nvim, a plugin that helps you remember to commit.
+Meet commitment.nvim, a plugin that helps you always remember to commit.
 
 ## Features
 
 - Operates on either number of saves or time interval
-- Hardcore mode: Prevents writes to file until changes are committed
 - When reached writes limit or a timeout, shows a reminder
-- Prevent useless commit messages by using a list of the common generic uninformative commit messages
+- Prevent useless commit messages by using a list of the common generic
+  uninformative commit messages
+- Hardcore mode: Prevents writes to file until changes are committed. It will
+  react to either of the restrictions above.
 
 ## Installation
 
