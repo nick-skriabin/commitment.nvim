@@ -1,0 +1,152 @@
+==============================================================================
+------------------------------------------------------------------------------
+                                                                         *utils*
+                                    `utils`
+# commitment.nvim - Never forget to git commit!
+MIT License Copyright (c) 2024 Nick Skriabin (a.k.a. Whaledev)
+
+Often commits are good. But we forget to do them. This plugin helps you remember to do them.
+
+## What this plugin does:
+- Operates on either number of saves or time interval
+- Hardcore mode: Prevents writes to file until changes are committed
+- When reached writes limit or a timeout, shows a reminder
+
+## Installation:
+
+### Lazy
+@usage >lua
+{
+  "whaledev/commitment.nvim",
+  opts = {}
+}
+<
+
+### Packer
+@usage >lua
+use {
+  "whaledev/commitment.nvim",
+  config = function()
+    require("commitment").setup()
+  end,
+}
+<
+
+### Vim-Plug
+@usage >vim
+Plug 'whaledev/commitment.nvim'
+<
+
+### Default config
+```lua
+require("commitment").setup({
+  -- Regular message. Shown when writes limit is reached or timer fired.
+  message = "Don't forget to git commit!",
+  -- Message shown when writes are prevented.
+  message_write_prevent = "You shall not write!",
+  -- Message shown when useless commit message is detected.
+  message_useless_commit = "That's not a very useless commit message, mind rephrasing it?",
+  -- Prevents writes to file until changes are committed.
+  stop_on_write = false,
+  -- Prevent writes to file when useless commit message is detected.
+  stop_on_useless_commit = false,
+  -- Number of writes before asking to commit.
+  writes_number = 30,
+  -- Interval in minutes to check git tree for changes.
+  check_interval = -1,
+})
+```
+
+------------------------------------------------------------------------------
+                                                                *custom_write()*
+                                `custom_write`()
+Handles writing to file
+Will prevent writes to file if `locked` is true
+Outputs the default message if written successfully
+
+------------------------------------------------------------------------------
+                                                                    *notifier()*
+                                  `notifier`()
+Sets up an autocmd to prevent writing to the file
+when `opts.prevent_write` is true.
+
+------------------------------------------------------------------------------
+                                               *M.setup_write_prevent_autocmd()*
+                    `M.setup_write_prevent_autocmd`({self})
+Sets up an autocmd to prevent writing to the file
+when `opts.prevent_write` is true.
+
+------------------------------------------------------------------------------
+                                                               *M.get_message()*
+                         `M.get_message`({self}, {alt})
+Gets the message to be displayed to the user
+
+Parameters ~
+{alt} `(boolean?)` Indicates that an alternative message should be used.
+
+------------------------------------------------------------------------------
+                                                     *M.setup_watcher_autocmd()*
+                       `M.setup_watcher_autocmd`({self})
+Sets up an autocmd to watch for changes in the git tree
+it will notify the user if they exceeded the number of writes
+or if the commit message is useless. It will also disable writing
+to the file when `opts.prevent_write` is true.
+
+------------------------------------------------------------------------------
+                                                             *M.run_scheduled()*
+                           `M.run_scheduled`({self})
+Runs the watcher with `opts.check_interval` interval in minutes
+
+------------------------------------------------------------------------------
+                                                                     *M.setup()*
+                          `M.setup`({self}, {config})
+Module setup
+
+Parameters ~
+{config} `(table|nil)` Module config table. See |commitment.config|.
+
+Usage ~
+>lua
+  require('commitment').setup() -- use default config
+  -- OR
+  require('commitment').setup({}) -- replace {} with your config table
+<
+
+==============================================================================
+------------------------------------------------------------------------------
+                                                                 *M.autogroup()*
+                         `M.autogroup`({name}, {clear})
+Creates an augroup
+
+Parameters ~
+{name} `(string)` The name of the augroup.
+{clear} `(boolean?)` Whether to clear the group before creating it.
+
+------------------------------------------------------------------------------
+                                                                   *M.autocmd()*
+                        `M.autocmd`({events}, {options})
+Creates an autocmd
+
+Parameters ~
+{events} `(string|string[])` The events to be listened to.
+{options} `(table)` The options for the autocmd.
+
+------------------------------------------------------------------------------
+                                                                    *M.notify()*
+                               `M.notify`({msg})
+Notifies the user with a message
+
+Parameters ~
+{msg} `(string)` The message to be displayed.
+
+------------------------------------------------------------------------------
+                                                           *M.deep_merge_opts()*
+                    `M.deep_merge_opts`({table1}, {table2})
+Merges two tables recursively
+
+Parameters ~
+{table1} `(table)`
+{table2} `(table)`
+
+
+ vim:tw=78:ts=8:noet:ft=help:norl:

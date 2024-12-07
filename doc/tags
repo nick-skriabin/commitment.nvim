@@ -1,12 +1,12 @@
 M.autocmd()	commitment.txt	/*M.autocmd()*
 M.autogroup()	commitment.txt	/*M.autogroup()*
 M.deep_merge_opts()	commitment.txt	/*M.deep_merge_opts()*
+M.get_message()	commitment.txt	/*M.get_message()*
 M.notify()	commitment.txt	/*M.notify()*
+M.run_scheduled()	commitment.txt	/*M.run_scheduled()*
 M.setup()	commitment.txt	/*M.setup()*
+M.setup_watcher_autocmd()	commitment.txt	/*M.setup_watcher_autocmd()*
+M.setup_write_prevent_autocmd()	commitment.txt	/*M.setup_write_prevent_autocmd()*
 custom_write()	commitment.txt	/*custom_write()*
-get_message()	commitment.txt	/*get_message()*
 notifier()	commitment.txt	/*notifier()*
-run_scheduled()	commitment.txt	/*run_scheduled()*
-setup_watcher_autocmd()	commitment.txt	/*setup_watcher_autocmd()*
-setup_write_prevent_autocmd()	commitment.txt	/*setup_write_prevent_autocmd()*
 utils	commitment.txt	/*utils*
