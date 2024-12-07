@@ -47,10 +47,10 @@ end
 ---@param t1 table
 ---@param t2 table
 ---
-function M.deep_merge(self, t1, t2)
+function M.deep_merge(t1, t2)
     for k, v in pairs(t2) do
         if (type(v) == "table") and (type(t1[k] or false) == "table") then
-            self:merge(t1[k], t2[k])
+            M.merge(t1[k], t2[k])
         else
             t1[k] = v
         end
