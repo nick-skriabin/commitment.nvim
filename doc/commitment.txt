@@ -68,18 +68,20 @@ Module start
 Handles writing to file
 Will prevent writes to file if `locked` is true
 Outputs the default message if written successfully
+@private
 
 ------------------------------------------------------------------------------
                                                                     *notifier()*
                                   `notifier`()
 Sets up an autocmd to prevent writing to the file
-when `opts.prevent_write` is true.
+when `config.prevent_write` is true.
+@private
 
 ------------------------------------------------------------------------------
                                                *M.setup_write_prevent_autocmd()*
                     `M.setup_write_prevent_autocmd`({self})
 Sets up an autocmd to prevent writing to the file
-when `opts.prevent_write` is true.
+when `config.prevent_write` is true.
 
 ------------------------------------------------------------------------------
                                                                *M.get_message()*
@@ -95,12 +97,12 @@ Parameters ~
 Sets up an autocmd to watch for changes in the git tree
 it will notify the user if they exceeded the number of writes
 or if the commit message is useless. It will also disable writing
-to the file when `opts.prevent_write` is true.
+to the file when `config.prevent_write` is true.
 
 ------------------------------------------------------------------------------
                                                              *M.run_scheduled()*
                            `M.run_scheduled`({self})
-Runs the watcher with `opts.check_interval` interval in minutes
+Runs the watcher with `config.check_interval` interval in minutes
 
 ------------------------------------------------------------------------------
                                                                      *M.setup()*
