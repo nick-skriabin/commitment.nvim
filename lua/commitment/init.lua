@@ -1,57 +1,57 @@
--- # commitment.nvim - Never forget to git commit!
--- MIT License Copyright (c) 2024 Nick Skriabin (a.k.a. Whaledev)
---
--- Often commits are good. But we forget to do them. This plugin helps you remember to do them.
---
--- ## What this plugin does:
--- - Operates on either number of saves or time interval
--- - Hardcore mode: Prevents writes to file until changes are committed
--- - When reached writes limit or a timeout, shows a reminder
---
--- ## Installation:
---
--- ### Lazy
--- ```lua
--- {
---   "whaledev/commitment.nvim",
---   opts = {}
--- }
--- ```
---
--- ### Packer
--- ```lua
--- use {
---   "whaledev/commitment.nvim",
---   config = function()
---     require("commitment").setup()
---   end,
--- }
--- ```
---
--- ### Vim-Plug
--- ```vim
--- Plug 'whaledev/commitment.nvim'
--- ```
---
--- ### Default config
--- ```lua
--- require("commitment").setup({
---   -- Regular message. Shown when writes limit is reached or timer fired.
---   message = "Don't forget to git commit!",
---   -- Message shown when writes are prevented.
---   message_write_prevent = "You shall not write!",
---   -- Message shown when useless commit message is detected.
---   message_useless_commit = "That's not a very useless commit message, mind rephrasing it?",
---   -- Prevents writes to file until changes are committed.
---   stop_on_write = false,
---   -- Prevent writes to file when useless commit message is detected.
---   stop_on_useless_commit = false,
---   -- Number of writes before asking to commit.
---   writes_number = 30,
---   -- Interval in minutes to check git tree for changes.
---   check_interval = -1,
--- })
--- ```
+--- # commitment.nvim - Never forget to git commit!
+--- MIT License Copyright (c) 2024 Nick Skriabin (a.k.a. Whaledev)
+---
+--- Often commits are good. But we forget to do them. This plugin helps you remember to do them.
+---
+--- ## What this plugin does:
+--- - Operates on either number of saves or time interval
+--- - Hardcore mode: Prevents writes to file until changes are committed
+--- - When reached writes limit or a timeout, shows a reminder
+---
+--- ## Installation:
+---
+--- ### Lazy
+--- ```lua
+--- {
+---   "whaledev/commitment.nvim",
+---   opts = {}
+--- }
+--- ```
+---
+--- ### Packer
+--- ```lua
+--- use {
+---   "whaledev/commitment.nvim",
+---   config = function()
+---     require("commitment").setup()
+---   end,
+--- }
+--- ```
+---
+--- ### Vim-Plug
+--- ```vim
+--- Plug 'whaledev/commitment.nvim'
+--- ```
+---
+--- ### Default config
+--- ```lua
+--- require("commitment").setup({
+---   -- Regular message. Shown when writes limit is reached or timer fired.
+---   message = "Don't forget to git commit!",
+---   -- Message shown when writes are prevented.
+---   message_write_prevent = "You shall not write!",
+---   -- Message shown when useless commit message is detected.
+---   message_useless_commit = "That's not a very useless commit message, mind rephrasing it?",
+---   -- Prevents writes to file until changes are committed.
+---   stop_on_write = false,
+---   -- Prevent writes to file when useless commit message is detected.
+---   stop_on_useless_commit = false,
+---   -- Number of writes before asking to commit.
+---   writes_number = 30,
+---   -- Interval in minutes to check git tree for changes.
+---   check_interval = -1,
+--- })
+--- ```
 local utils = require("commitment.utils")
 local git = require("commitment.git")
 
@@ -78,10 +78,11 @@ local locked = false
 -- Module start
 local M = {}
 
--- Handles writing to file
--- Will prevent writes to file if `locked` is true
--- Outputs the default message if written successfully
-local function custom_write(args)
+--- Handles writing to file
+--- Will prevent writes to file if `locked` is true
+--- Outputs the default message if written successfully
+---
+local function custom_write()
     vim.api.nvim_exec_autocmds("BufWritePre", {
         buffer = 0,
     })
@@ -136,12 +137,19 @@ local function custom_write(args)
     end
 end
 
--- Notify with a debounce
+--- Sets up an autocmd to prevent writing to the file
+--- when `opts.prevent_write` is true.
+---
 local function notifier()
     local last_notification_time = 0
     local debounce_interval = 500 -- 500 milliseconds
     local L = {}
 
+    --- Sends a notification. Debounces the notifications
+    --- within 500ms to prevent spamming.
+    ---
+    ---@param message string The message to be displayed.
+    ---
     function L.notify(message)
         local current_time = vim.loop.hrtime() / 1e6 -- convert to milliseconds
         local time_diff = current_time - last_notification_time
@@ -155,6 +163,11 @@ local function notifier()
     return L
 end
 
+--- Sets up an autocmd to prevent writing to the file
+--- when `opts.prevent_write` is true.
+---
+---@param opts table Module config table.
+---
 local function setup_write_prevent_autocmd(opts)
     local notify = notifier().notify
 
@@ -164,6 +177,11 @@ local function setup_write_prevent_autocmd(opts)
     })
 end
 
+--- Gets the message to be displayed to the user
+---
+---@param opts table Module config table.
+---@param alt boolean? Indicates that an alternative message should be used.
+---
 local function get_message(opts, alt)
     local extra_message = opts.prevent_write and locked and "\n(writing to file disabled)" or ""
     local main_message = opts.prevent_write and opts.message_write_prevent or opts.message
@@ -173,6 +191,13 @@ local function get_message(opts, alt)
     return main_message .. extra_message
 end
 
+--- Sets up an autocmd to watch for changes in the git tree
+--- it will notify the user if they exceeded the number of writes
+--- or if the commit message is useless. It will also disable writing
+--- to the file when `opts.prevent_write` is true.
+---
+---@param opts table Module config table.
+---
 local function setup_watcher_autocmd(opts)
     local n = notifier()
     utils.autocmd({ "BufWritePre" }, {
@@ -194,13 +219,17 @@ local function setup_watcher_autocmd(opts)
     })
 end
 
--- runs every opt.check_interval minutes
+--- Runs the watcher with `opts.check_interval` interval in minutes
+---
+---@param opts table Module config table.
+---
 local function run_scheduled(opts)
     local n = notifier()
     vim.defer_fn(function()
         local clean = git.git_tree_is_clean()
-        if not clean then
-            n.notify(get_message(opts))
+        local useless = git.is_useless_commit()
+        if not clean or useless then
+            n.notify(get_message(opts, useless))
             locked = true
         else
             locked = false
@@ -211,28 +240,28 @@ end
 
 --- Module setup
 ---
----@param config table|nil Module config table. See |MiniDoc.config|.
+---@param config table|nil Module config table. See |commitment.config|.
 ---
 ---@usage >lua
----   require('mini.doc').setup() -- use default config
+---   require('commitment').setup() -- use default config
 ---   -- OR
----   require('mini.doc').setup({}) -- replace {} with your config table
+---   require('commitment').setup({}) -- replace {} with your config table
 --- <
-function M.setup(opts)
-    opts = utils.deep_merge_opts(opts)
+function M.setup(config)
+    config = utils.deep_merge_opts(config)
     if not git.is_git_repo() then
         return
     end
 
-    if opts.prevent_write then
-        setup_write_prevent_autocmd(opts)
+    if config.prevent_write then
+        setup_write_prevent_autocmd(config)
     end
 
-    if opts.check_interval == -1 then
-        setup_watcher_autocmd(opts)
+    if config.check_interval == -1 then
+        setup_watcher_autocmd(config)
         return
     else
-        run_scheduled(opts)
+        run_scheduled(config)
     end
 end
 
