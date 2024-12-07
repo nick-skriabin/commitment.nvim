@@ -7,6 +7,7 @@
 --- - Operates on either number of saves or time interval
 --- - Hardcore mode: Prevents writes to file until changes are committed
 --- - When reached writes limit or a timeout, shows a reminder
+--- - Uses a list of the most common useless commit messages to detect useless commits
 ---
 --- ## Installation:
 ---
