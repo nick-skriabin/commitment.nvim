@@ -83,6 +83,7 @@ local M = {
 --- Handles writing to file
 --- Will prevent writes to file if `locked` is true
 --- Outputs the default message if written successfully
+--- @private
 ---
 local function custom_write()
     vim.api.nvim_exec_autocmds("BufWritePre", {
@@ -141,6 +142,7 @@ end
 
 --- Sets up an autocmd to prevent writing to the file
 --- when `opts.prevent_write` is true.
+--- @private
 ---
 local function notifier()
     local last_notification_time = 0
