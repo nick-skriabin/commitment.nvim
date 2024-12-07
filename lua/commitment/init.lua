@@ -195,13 +195,13 @@ end
 --- or if the commit message is useless. It will also disable writing
 --- to the file when `config.prevent_write` is true.
 ---
-function M.setup_watcher_autocmd(self)
+function M.setup_watcher_autocmd()
     local n = notifier()
     utils.autocmd({ "BufWritePre" }, {
         group = utils.autogroup("commitment-watch", true),
         callback = function()
             local clean = git.git_tree_is_clean()
-            local exceeded_writes = WRITES_COUNT > self.config.writes_number
+            local exceeded_writes = WRITES_COUNT > M.config.writes_number
             local useless = git.is_useless_commit()
 
             if clean and not useless then
@@ -242,12 +242,12 @@ end
 ---   -- OR
 ---   require('commitment').setup({}) -- replace {} with your config table
 --- <
-function M.setup(self, config)
+function M.setup(config)
     if not git.is_git_repo() then
         return
     end
     print(config or {})
-    print(self.config)
+    print(M.config)
     M.config = utils.deep_merge(config or {}, M.config)
 
     if M.config.prevent_write then
