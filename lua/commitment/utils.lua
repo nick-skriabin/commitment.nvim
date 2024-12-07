@@ -44,26 +44,18 @@ end
 
 --- Merges two tables recursively
 ---
----@param table1 table
----@param table2 table
+---@param t1 table
+---@param t2 table
 ---
-function M.deep_merge(table1, table2)
-    local default_opts = table2
-    local opts = table1
-
-    for k, v in pairs(default_opts) do
-        if type(v) == "table" then
-            if opts[k] == nil then
-                opts[k] = {}
-            end
-            opts[k] = M.deep_merge(opts[k], v)
+function M.deep_merge(self, t1, t2)
+    for k, v in pairs(t2) do
+        if (type(v) == "table") and (type(t1[k] or false) == "table") then
+            self:merge(t1[k], t2[k])
         else
-            if opts[k] == nil then
-                opts[k] = v
-            end
+            t1[k] = v
         end
     end
-    return opts
+    return t1
 end
 
 return M
