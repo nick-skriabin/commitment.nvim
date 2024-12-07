@@ -246,8 +246,6 @@ function M.setup(config)
     if not git.is_git_repo() then
         return
     end
-    print(config or {})
-    print(M.config)
     M.config = utils.deep_merge(config or {}, M.config)
 
     if M.config.prevent_write then
