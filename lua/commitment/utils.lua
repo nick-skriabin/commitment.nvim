@@ -1,3 +1,4 @@
+--- Collection of utility functions
 local M = {}
 
 --- Creates an augroup
@@ -46,7 +47,7 @@ end
 ---@param table1 table
 ---@param table2 table
 ---
-function M.deep_merge_opts(table1, table2)
+function M.deep_merge(table1, table2)
     local default_opts = table2
     local opts = table1
 
@@ -55,7 +56,7 @@ function M.deep_merge_opts(table1, table2)
             if opts[k] == nil then
                 opts[k] = {}
             end
-            opts[k] = M.deep_merge_opts(opts[k], v)
+            opts[k] = M.deep_merge(opts[k], v)
         else
             if opts[k] == nil then
                 opts[k] = v
