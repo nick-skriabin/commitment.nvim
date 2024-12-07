@@ -61,7 +61,7 @@ local default_opts = {
     -- Message shown when writes are prevented.
     message_write_prevent = "You shall not write!",
     -- Message shown when useless commit message is detected.
-    message_useless_commit = "That's not a very useless commit message, mind rephrasing it?",
+    message_useless_commit = "That's not a very useful commit message, mind rephrasing it?",
     -- Prevents writes to file until changes are committed.
     stop_on_write = false,
     -- Prevent writes to file when useless commit message is detected.
@@ -170,7 +170,7 @@ local function get_message(opts, alt)
     if alt then
         main_message = opts.message_useless_commit
     end
-    return (opts.prevent_write and opts.message_write_prevent or opts.message) .. extra_message
+    return main_message .. extra_message
 end
 
 local function setup_watcher_autocmd(opts)
@@ -180,15 +180,14 @@ local function setup_watcher_autocmd(opts)
         callback = function()
             local clean = git.git_tree_is_clean()
             local exceeded_writes = writes_count > opts.writes_number
+            local useless = git.is_useless_commit()
 
-            if clean and git.is_dumb_commit() then
-                n.notify(get_message(opts))
-            elseif not clean and exceeded_writes then
-                locked = true
-                n.notify(get_message(opts))
-            elseif clean then
-                writes_count = 0
+            if clean and not useless then
                 locked = false
+                write_count = 0
+            elseif (not clean and exceeded_writes) or (clean and useless) then
+                locked = true
+                n.notify(get_message(opts, useless))
             end
             writes_count = writes_count + 1
         end,
@@ -210,18 +209,6 @@ local function run_scheduled(opts)
     end, opts.check_interval * 60 * 1000)
 end
 
--- Merges opts with default_opts
-local function deep_merge_opts(opts)
-    local merged_opts = {}
-    for k, v in pairs(default_opts) do
-        merged_opts[k] = v
-    end
-    for k, v in pairs(opts) do
-        merged_opts[k] = v
-    end
-    return merged_opts
-end
-
 function M.setup(opts)
     opts = deep_merge_opts(opts)
     if not git.is_git_repo() then
@@ -239,5 +226,7 @@ function M.setup(opts)
         run_scheduled(opts)
     end
 end
+
+M.git = git
 
 return M
