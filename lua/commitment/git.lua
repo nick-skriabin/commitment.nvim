@@ -21,7 +21,7 @@ end
 --- @param filename string
 --- @return boolean
 function Git.file_has_changes(filename)
-    local has_changes = vim.fn.system("cd " .. vim.fn.getcwd() .. " && git status --s " .. filename .. " | wc -l | awk '$1=$1'")
+    return vim.fn.system("cd " .. vim.fn.getcwd() .. " && git status --s " .. filename .. " | wc -l | awk '$1=$1'")
 end
 
 --- Checks if the commit message is useless
@@ -35,7 +35,8 @@ function Git.is_useless_commit()
         local commit_lowercase = commit_message:lower()
         local message_lowercase = message:lower()
 
-        if commit_lowercase:find(message_lowercase) then
+        -- if commit_lowercase:find(message_lowercase) then
+        if commit_lowercase == message_lowercase then
             return true
         end
     end

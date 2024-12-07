@@ -14,6 +14,7 @@ Utils.autocmd()	commitment.txt	/*Utils.autocmd()*
 Utils.autogroup()	commitment.txt	/*Utils.autogroup()*
 Utils.deep_merge()	commitment.txt	/*Utils.deep_merge()*
 Utils.notify()	commitment.txt	/*Utils.notify()*
+commitment.nvim	commitment.txt	/*commitment.nvim*
 custom_write()	commitment.txt	/*custom_write()*
 notifier()	commitment.txt	/*notifier()*
 utils	commitment.txt	/*utils*

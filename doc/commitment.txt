@@ -2,20 +2,22 @@
 ------------------------------------------------------------------------------
                                                                          *utils*
                                     `utils`
-# commitment.nvim - Never forget to git commit!
+*commitment.nvim* - Never forget to git commit!
+
 MIT License Copyright (c) 2024 Nick Skriabin (a.k.a. Whaledev)
 
 Often commits are good. But we forget to do them. This plugin helps you remember to do them.
 
-## What this plugin does:
+## What this plugin does: ~
 - Operates on either number of saves or time interval
 - Hardcore mode: Prevents writes to file until changes are committed
 - When reached writes limit or a timeout, shows a reminder
 - Uses a list of the most common useless commit messages to detect useless commits
 
-## Installation:
+## Installation: ~
 
-### Lazy
+### Lazy ~
+
 @usage >lua
 {
   "whaledev/commitment.nvim",
@@ -23,7 +25,8 @@ Often commits are good. But we forget to do them. This plugin helps you remember
 }
 <
 
-### Packer
+### Packer ~
+
 @usage >lua
 use {
   "whaledev/commitment.nvim",
@@ -33,12 +36,14 @@ use {
 }
 <
 
-### Vim-Plug
+### Vim-Plug ~
+
 @usage >vim
 Plug 'whaledev/commitment.nvim'
 <
 
-### Default config
+### Default config ~
+
 ```lua
 require("commitment").setup({
   -- Regular message. Shown when writes limit is reached or timer fired.
