@@ -169,7 +169,7 @@ end
 --- Sets up an autocmd to prevent writing to the file
 --- when `config.prevent_write` is true.
 ---
-function M.setup_write_prevent_autocmd(self)
+function M.setup_write_prevent_autocmd()
     utils.autocmd({ "BufWriteCmd" }, {
         group = utils.autogroup("commitment-preven", true),
         callback = custom_write,
@@ -180,8 +180,8 @@ end
 ---
 ---@param alt boolean? Indicates that an alternative message should be used.
 ---
-function M.get_message(self, alt)
-    local config = self.config
+function M.get_message(alt)
+    local config = M.config
     local extra_message = config.prevent_write and LOCKED and "\n(writing to file disabled)" or ""
     local main_message = config.prevent_write and config.message_write_prevent or config.message
     if alt then
@@ -209,7 +209,7 @@ function M.setup_watcher_autocmd(self)
                 WRITE_COUNT = 0
             elseif (not clean and exceeded_writes) or (clean and useless) then
                 LOCKED = true
-                n.notify(self:get_message(useless))
+                n.notify(M.get_message(useless))
             end
             WRITES_COUNT = WRITES_COUNT + 1
         end,
@@ -218,19 +218,19 @@ end
 
 --- Runs the watcher with `config.check_interval` interval in minutes
 ---
-function M.run_scheduled(self)
+function M.run_scheduled()
     local n = notifier()
     vim.defer_fn(function()
         local clean = git.git_tree_is_clean()
         local useless = git.is_useless_commit()
         if not clean or useless then
-            n.notify(self:get_message(useless))
+            n.notify(M.get_message(useless))
             LOCKED = true
         else
             LOCKED = false
         end
-        self:run_scheduled()
-    end, self.config.check_interval * 60 * 1000)
+        M.run_scheduled()
+    end, M.config.check_interval * 60 * 1000)
 end
 
 --- Module setup
@@ -248,17 +248,17 @@ function M.setup(self, config)
     end
     print(config or {})
     print(self.config)
-    self.config = utils.deep_merge(config or {}, self.config)
+    M.config = utils.deep_merge(config or {}, M.config)
 
-    if self.config.prevent_write then
-        self:setup_write_prevent_autocmd()
+    if M.config.prevent_write then
+        M.setup_write_prevent_autocmd()
     end
 
-    if self.config.check_interval == -1 then
-        self.setup_watcher_autocmd()
+    if M.config.check_interval == -1 then
+        M.setup_watcher_autocmd()
         return
     else
-        M:run_scheduled()
+        M.run_scheduled()
     end
 end
 
