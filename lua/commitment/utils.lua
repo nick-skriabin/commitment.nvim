@@ -1,12 +1,12 @@
 --- Collection of utility functions
-local M = {}
+local Utils = {}
 
 --- Creates an augroup
 ---
 ---@param name string The name of the augroup.
 ---@param clear boolean? Whether to clear the group before creating it.
 ---
-M.autogroup = function(name, clear)
+Utils.autogroup = function(name, clear)
     local clear_group = true
 
     if clear == nil then
@@ -21,7 +21,7 @@ end
 ---@param events string|string[] The events to be listened to.
 ---@param options table The options for the autocmd.
 ---
-M.autocmd = function(events, options)
+Utils.autocmd = function(events, options)
     vim.api.nvim_create_autocmd(events, options)
 end
 
@@ -29,7 +29,7 @@ end
 ---
 ---@param msg string The message to be displayed.
 ---
-function M.notify(msg)
+function Utils.notify(msg)
     -- if snacks.nvim is available, use it
     if pcall(require, "snacks") then
         require("snacks").notify.warn(msg)
@@ -47,10 +47,10 @@ end
 ---@param t1 table
 ---@param t2 table
 ---
-function M.deep_merge(t1, t2)
+function Utils.deep_merge(t1, t2)
     for k, v in pairs(t2) do
         if (type(v) == "table") and (type(t1[k] or false) == "table") then
-            M.merge(t1[k], t2[k])
+            Utils.merge(t1[k], t2[k])
         else
             t1[k] = v
         end
@@ -58,4 +58,4 @@ function M.deep_merge(t1, t2)
     return t1
 end
 
-return M
+return Utils

@@ -60,7 +60,7 @@ WRITES_COUNT = 0
 LOCKED = false
 
 --- Module start
-local M = {
+local Commitment = {
     config = {
         --- Regular message. Shown when writes limit is reached or timer fired.
         message = "Don't forget to git commit!",
@@ -169,7 +169,7 @@ end
 --- Sets up an autocmd to prevent writing to the file
 --- when `config.prevent_write` is true.
 ---
-function M.setup_write_prevent_autocmd()
+function Commitment.setup_write_prevent_autocmd()
     utils.autocmd({ "BufWriteCmd" }, {
         group = utils.autogroup("commitment-preven", true),
         callback = custom_write,
@@ -180,8 +180,8 @@ end
 ---
 ---@param alt boolean? Indicates that an alternative message should be used.
 ---
-function M.get_message(alt)
-    local config = M.config
+function Commitment.get_message(alt)
+    local config = Commitment.config
     local extra_message = config.prevent_write and LOCKED and "\n(writing to file disabled)" or ""
     local main_message = config.prevent_write and config.message_write_prevent or config.message
     if alt then
@@ -195,13 +195,13 @@ end
 --- or if the commit message is useless. It will also disable writing
 --- to the file when `config.prevent_write` is true.
 ---
-function M.setup_watcher_autocmd()
+function Commitment.setup_watcher_autocmd()
     local n = notifier()
     utils.autocmd({ "BufWritePre" }, {
         group = utils.autogroup("commitment-watch", true),
         callback = function()
             local clean = git.git_tree_is_clean()
-            local exceeded_writes = WRITES_COUNT > M.config.writes_number
+            local exceeded_writes = WRITES_COUNT > Commitment.config.writes_number
             local useless = git.is_useless_commit()
 
             if clean and not useless then
@@ -209,7 +209,7 @@ function M.setup_watcher_autocmd()
                 WRITE_COUNT = 0
             elseif (not clean and exceeded_writes) or (clean and useless) then
                 LOCKED = true
-                n.notify(M.get_message(useless))
+                n.notify(Commitment.get_message(useless))
             end
             WRITES_COUNT = WRITES_COUNT + 1
         end,
@@ -218,19 +218,19 @@ end
 
 --- Runs the watcher with `config.check_interval` interval in minutes
 ---
-function M.run_scheduled()
+function Commitment.run_scheduled()
     local n = notifier()
     vim.defer_fn(function()
         local clean = git.git_tree_is_clean()
         local useless = git.is_useless_commit()
         if not clean or useless then
-            n.notify(M.get_message(useless))
+            n.notify(Commitment.get_message(useless))
             LOCKED = true
         else
             LOCKED = false
         end
-        M.run_scheduled()
-    end, M.config.check_interval * 60 * 1000)
+        Commitment.run_scheduled()
+    end, Commitment.config.check_interval * 60 * 1000)
 end
 
 --- Module setup
@@ -242,24 +242,24 @@ end
 ---   -- OR
 ---   require('commitment').setup({}) -- replace {} with your config table
 --- <
-function M.setup(config)
+function Commitment.setup(config)
     if not git.is_git_repo() then
         return
     end
-    M.config = utils.deep_merge(config or {}, M.config)
+    Commitment.config = utils.deep_merge(config or {}, Commitment.config)
 
-    if M.config.prevent_write then
-        M.setup_write_prevent_autocmd()
+    if Commitment.config.prevent_write then
+        Commitment.setup_write_prevent_autocmd()
     end
 
-    if M.config.check_interval == -1 then
-        M.setup_watcher_autocmd()
+    if Commitment.config.check_interval == -1 then
+        Commitment.setup_watcher_autocmd()
         return
     else
-        M.run_scheduled()
+        Commitment.run_scheduled()
     end
 end
 
-M.git = git
+Commitment.git = git
 
-return M
+return Commitment
