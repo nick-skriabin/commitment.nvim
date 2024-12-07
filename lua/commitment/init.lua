@@ -56,29 +56,27 @@
 local utils = require("commitment.utils")
 local git = require("commitment.git")
 
-local default_config = {
-    --- Regular message. Shown when writes limit is reached or timer fired.
-    message = "Don't forget to git commit!",
-    --- Message shown when writes are prevented.
-    message_write_prevent = "You shall not write!",
-    --- Message shown when useless commit message is detected.
-    message_useless_commit = "That's not a very useful commit message, mind rephrasing it?",
-    --- Prevents writes to file until changes are committed.
-    stop_on_write = false,
-    --- Prevent writes to file when useless commit message is detected.
-    stop_on_useless_commit = false,
-    --- Number of writes before asking to commit.
-    writes_number = 30,
-    --- Interval in minutes to check git tree for changes.
-    check_interval = -1,
-}
-
 WRITES_COUNT = 0
-local locked = false
+LOCKED = false
 
 --- Module start
 local M = {
-    config = default_config,
+    config = {
+        --- Regular message. Shown when writes limit is reached or timer fired.
+        message = "Don't forget to git commit!",
+        --- Message shown when writes are prevented.
+        message_write_prevent = "You shall not write!",
+        --- Message shown when useless commit message is detected.
+        message_useless_commit = "That's not a very useful commit message, mind rephrasing it?",
+        --- Prevents writes to file until changes are committed.
+        stop_on_write = false,
+        --- Prevent writes to file when useless commit message is detected.
+        stop_on_useless_commit = false,
+        --- Number of writes before asking to commit.
+        writes_number = 30,
+        --- Interval in minutes to check git tree for changes.
+        check_interval = -1,
+    },
 }
 
 --- Handles writing to file
@@ -102,7 +100,7 @@ local function custom_write()
 
     local file_has_changes = git.file_has_changes(filename)
 
-    if locked and (vim.bo.modified or file_has_changes) then
+    if LOCKED and (vim.bo.modified or file_has_changes) then
         return
     end
 
@@ -184,7 +182,7 @@ end
 ---
 function M.get_message(self, alt)
     local config = self.config
-    local extra_message = config.prevent_write and locked and "\n(writing to file disabled)" or ""
+    local extra_message = config.prevent_write and LOCKED and "\n(writing to file disabled)" or ""
     local main_message = config.prevent_write and config.message_write_prevent or config.message
     if alt then
         main_message = config.message_useless_commit
@@ -207,10 +205,10 @@ function M.setup_watcher_autocmd(self)
             local useless = git.is_useless_commit()
 
             if clean and not useless then
-                locked = false
+                LOCKED = false
                 WRITE_COUNT = 0
             elseif (not clean and exceeded_writes) or (clean and useless) then
-                locked = true
+                LOCKED = true
                 n.notify(self:get_message(useless))
             end
             WRITES_COUNT = WRITES_COUNT + 1
@@ -227,9 +225,9 @@ function M.run_scheduled(self)
         local useless = git.is_useless_commit()
         if not clean or useless then
             n.notify(self:get_message(useless))
-            locked = true
+            LOCKED = true
         else
-            locked = false
+            LOCKED = false
         end
         self:run_scheduled()
     end, self.config.check_interval * 60 * 1000)
