@@ -55,7 +55,7 @@
 local utils = require("commitment.utils")
 local git = require("commitment.git")
 
-local default_opts = {
+local default_config = {
     --- Regular message. Shown when writes limit is reached or timer fired.
     message = "Don't forget to git commit!",
     --- Message shown when writes are prevented.
@@ -77,7 +77,7 @@ local locked = false
 
 --- Module start
 local M = {
-    config = default_opts,
+    config = default_config,
 }
 
 --- Handles writing to file
@@ -141,7 +141,7 @@ local function custom_write()
 end
 
 --- Sets up an autocmd to prevent writing to the file
---- when `opts.prevent_write` is true.
+--- when `config.prevent_write` is true.
 --- @private
 ---
 local function notifier()
@@ -168,7 +168,7 @@ local function notifier()
 end
 
 --- Sets up an autocmd to prevent writing to the file
---- when `opts.prevent_write` is true.
+--- when `config.prevent_write` is true.
 ---
 function M.setup_write_prevent_autocmd(self)
     utils.autocmd({ "BufWriteCmd" }, {
@@ -182,11 +182,11 @@ end
 ---@param alt boolean? Indicates that an alternative message should be used.
 ---
 function M.get_message(self, alt)
-    local opts = self.config
-    local extra_message = opts.prevent_write and locked and "\n(writing to file disabled)" or ""
-    local main_message = opts.prevent_write and opts.message_write_prevent or opts.message
+    local config = self.config
+    local extra_message = config.prevent_write and locked and "\n(writing to file disabled)" or ""
+    local main_message = config.prevent_write and config.message_write_prevent or config.message
     if alt then
-        main_message = opts.message_useless_commit
+        main_message = config.message_useless_commit
     end
     return main_message .. extra_message
 end
@@ -194,7 +194,7 @@ end
 --- Sets up an autocmd to watch for changes in the git tree
 --- it will notify the user if they exceeded the number of writes
 --- or if the commit message is useless. It will also disable writing
---- to the file when `opts.prevent_write` is true.
+--- to the file when `config.prevent_write` is true.
 ---
 function M.setup_watcher_autocmd(self)
     local n = notifier()
@@ -217,7 +217,7 @@ function M.setup_watcher_autocmd(self)
     })
 end
 
---- Runs the watcher with `opts.check_interval` interval in minutes
+--- Runs the watcher with `config.check_interval` interval in minutes
 ---
 function M.run_scheduled(self)
     local n = notifier()
@@ -247,7 +247,7 @@ function M.setup(self, config)
     if not git.is_git_repo() then
         return
     end
-    self.config = utils.deep_merge_opts(config or {}, self.config)
+    self.config = utils.deep_merge(config or {}, self.config)
 
     if self.config.prevent_write then
         self:setup_write_prevent_autocmd()
