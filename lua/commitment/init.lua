@@ -75,7 +75,7 @@ local default_opts = {
 WRITES_COUNT = 0
 local locked = false
 
--- Module start
+--- Module start
 local M = {
     config = default_opts,
 }
