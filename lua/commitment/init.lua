@@ -209,8 +209,17 @@ local function run_scheduled(opts)
     end, opts.check_interval * 60 * 1000)
 end
 
+--- Module setup
+---
+---@param config table|nil Module config table. See |MiniDoc.config|.
+---
+---@usage >lua
+---   require('mini.doc').setup() -- use default config
+---   -- OR
+---   require('mini.doc').setup({}) -- replace {} with your config table
+--- <
 function M.setup(opts)
-    opts = deep_merge_opts(opts)
+    opts = utils.deep_merge_opts(opts)
     if not git.is_git_repo() then
         return
     end
