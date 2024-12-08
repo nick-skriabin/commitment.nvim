@@ -2,6 +2,7 @@ Commitment	commitment.txt	/*Commitment*
 Git.git_tree_is_clean()	commitment.txt	/*Git.git_tree_is_clean()*
 Git.is_git_repo()	commitment.txt	/*Git.is_git_repo()*
 Git.is_useless_commit()	commitment.txt	/*Git.is_useless_commit()*
+Hardcore	commitment.txt	/*Hardcore*
 M	commitment.txt	/*M*
 M.get_message()	commitment.txt	/*M.get_message()*
 M.run_scheduled()	commitment.txt	/*M.run_scheduled()*
@@ -15,3 +16,4 @@ Utils.notify()	commitment.txt	/*Utils.notify()*
 commitment.nvim	commitment.txt	/*commitment.nvim*
 custom_write()	commitment.txt	/*custom_write()*
 notifier()	commitment.txt	/*notifier()*
+schedule	commitment.txt	/*schedule*

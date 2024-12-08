@@ -12,6 +12,24 @@ Meet commitment.nvim, a plugin that helps you always remember to commit.
 - Hardcore mode: Prevents writes to file until changes are committed. It will
   react to either of the restrictions above.
 
+## How it works
+
+The plugin operates relies on the `git status` command and checks if the git tree is clean.
+
+When in *writes count* mode, it will count the number of writes overall for all your buffers and
+will notify you when you reach the limit of `writes_number` if the git tree is dirty.
+
+In the *schedule* mode, it's basically the same except it will check the git tree every
+`check_interval` minutes.
+
+*Stop on useless commits* feature is comparing your last commit message withe a list of the most
+common uninformative commit messages like "update", "fix", "wip", etc. and will ask you to
+rephrase your commit message if it matches.
+
+*Hardcore mode*, when enabled, will prevent you from saving your file until you commit all the
+changes you have in a working tree right now. If `stop_on_useless_commit`, it will also prevent
+you from saving until you fix the commit message.
+
 ## Installation
 
 Install with your favorite plugin manager.
