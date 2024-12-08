@@ -40,7 +40,7 @@ use {
 ### Vim-Plug ~
 
 @usage >vim
-Plug 'nick-skriabin/commitment.nvim'
+Plug 'whaledev/commitment.nvim'
 <
 
 ### Default config ~
