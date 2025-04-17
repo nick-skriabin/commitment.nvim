@@ -1,6 +1,6 @@
 <h1 align="center">✨commitment.nvim✨</h1>
 
-We all know often commits are good. But we forget to do them.
+We all know frequent commits are good. But we forget to do them.
 Meet commitment.nvim, a plugin that helps you always remember to commit.
 
 ## Features
